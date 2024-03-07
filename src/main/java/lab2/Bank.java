@@ -1,4 +1,4 @@
-package lab1.lab2;
+package lab2;
 
 public class Bank {
 }

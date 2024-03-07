@@ -1,4 +1,4 @@
-package lab1.lab2;
+package lab2;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
