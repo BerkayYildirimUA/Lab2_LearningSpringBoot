@@ -1,4 +1,4 @@
-package lab2;
+package lab2.Server.Entity;
 
 import jakarta.persistence.*;
 
@@ -25,19 +25,25 @@ public class Account {
     public Account(Person ... persons){
         owners = new HashSet<>();
         owners.addAll(Arrays.asList(persons));
+        balence = 0.0;
     }
 
     public Account() {
         owners = new HashSet<>();
+
+        balence = 0.0;
     }
 
 
-    public void addOwner(Person person){
-        owners.add(person);
+    public void addOwner(Person ... persons){
+        owners.addAll(Arrays.asList(persons));
     }
 
-    public void removeOwner(Person person){
-        owners.remove(person);
+    public void removeOwner(Person ... persons){
+        Arrays.asList(persons).forEach(person -> {
+            person.removeAcount(this);
+            owners.remove(person);
+        });
     }
 
     public Double getBalence() {
@@ -52,8 +58,15 @@ public class Account {
         this.balence += balence;
     }
 
+    public long getId() {
+        return id;
+    }
 
     public void removeBalence(Double balence) {
+        this.balence -= balence;
+    }
+
+    public void withdrawBalence(Double balence) {
         this.balence -= balence;
     }
 }

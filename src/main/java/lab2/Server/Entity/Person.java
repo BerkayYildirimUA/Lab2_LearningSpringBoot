@@ -1,11 +1,8 @@
-package lab2;
+package lab2.Server.Entity;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -26,5 +23,13 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addAcount(Account ... accounts){
+        myAcounts.addAll(Arrays.asList(accounts));
+    }
+
+    public void removeAcount(Account ... accounts){
+        Arrays.asList(accounts).forEach(myAcounts::remove);
     }
 }
