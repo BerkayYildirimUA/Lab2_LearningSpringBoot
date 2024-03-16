@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,15 +21,16 @@ public class PersonController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Person> createPerson(@RequestBody Map<String, String> payload) {
-        String name = payload.get("name");
-        System.out.println(name);
-
+    public ResponseEntity<HashMap<String, Object>> createPerson(@RequestParam String name) {
         Person person = new Person();
         person.setName(name);
-
         Person savedPerson = personService.createPerson(person);
-        return ResponseEntity.ok(savedPerson);
+
+        HashMap<String, Object> ans = new HashMap<>();
+        ans.put("personID", savedPerson.getId());
+        ans.put("name", savedPerson.getName());
+
+        return ResponseEntity.ok().body(ans);
     }
 }
 

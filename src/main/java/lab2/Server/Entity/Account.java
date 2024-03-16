@@ -20,18 +20,17 @@ public class Account {
     )
     private Set<Person> owners;
 
-    private Double balence;
+    private Double balance;
 
     public Account(Person ... persons){
         owners = new HashSet<>();
         owners.addAll(Arrays.asList(persons));
-        balence = 0.0;
+        balance = 0.0;
     }
 
     public Account() {
         owners = new HashSet<>();
-
-        balence = 0.0;
+        balance = 0.0;
     }
 
 
@@ -39,34 +38,38 @@ public class Account {
         owners.addAll(Arrays.asList(persons));
     }
 
+    public boolean isOwner(Person person){
+        return owners.contains(person);
+    }
+
     public void removeOwner(Person ... persons){
         Arrays.asList(persons).forEach(person -> {
-            person.removeAcount(this);
+            person.removeAccount(this);
             owners.remove(person);
         });
     }
 
-    public Double getBalence() {
-        return balence;
+    public Double getBalance() {
+        return balance;
     }
 
-    public void setBalence(Double balence) {
-        this.balence = balence;
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
-    public void addBalence(Double balence) {
-        this.balence += balence;
+    public void addBalance(Double balance) {
+        this.balance += balance;
     }
 
     public long getId() {
         return id;
     }
 
-    public void removeBalence(Double balence) {
-        this.balence -= balence;
+    public void removeBalance(Double balance) {
+        this.balance -= balance;
     }
 
-    public void withdrawBalence(Double balence) {
-        this.balence -= balence;
+    public void withdrawBalance(Double balance) {
+        this.balance -= balance;
     }
 }

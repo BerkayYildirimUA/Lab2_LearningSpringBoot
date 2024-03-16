@@ -30,14 +30,16 @@ public class Bank {
     }
 
     public Optional<Account> getAcount(long accountId) {
-        return Optional.of(accountRepository.getReferenceById(accountId));
+        return accountRepository.findById(accountId);
     }
 
     public boolean deposit(long accountId, double amount) {
         Optional<Account> accountOptional = getAcount(accountId);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
-            account.addBalence(amount);
+            account.addBalance(amount);
+
+            accountRepository.save(account);
             return true;
         }
         return false;
@@ -48,8 +50,10 @@ public class Bank {
 
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            if (account.getBalence() >= amount) {
-                account.withdrawBalence(amount);
+            if (account.getBalance() >= amount) {
+                account.withdrawBalance(amount);
+
+                accountRepository.save(account);
                 return Optional.of(amount); // beetje vals spelen maar ik zie niet hoe ik ander "Remove money" en "Get money" van elkaar kan verschillen.
             }
         }
@@ -60,8 +64,10 @@ public class Bank {
         Optional<Account> accountOpt = getAcount(accountId);
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            if (account.getBalence() >= amount) {
-                account.removeBalence(amount);
+            if (account.getBalance() >= amount) {
+                account.removeBalance(amount);
+
+                accountRepository.save(account);
                 return true;
             }
         }
@@ -70,7 +76,7 @@ public class Bank {
 
     public Optional<Double> getBalance(long accountId) {
         Optional<Account> accountOpt = getAcount(accountId);
-        return accountOpt.map(Account::getBalence);
+        return accountOpt.map(Account::getBalance);
     }
 
     public Optional<Account> createAcount(long personID) {
@@ -78,7 +84,7 @@ public class Bank {
         Optional<Person> owner = personRepository.findById(personID);
         if (owner.isPresent()) {
             account.addOwner(owner.get());
-            owner.get().addAcount(account);
+            owner.get().addAccount(account);
             return Optional.of(accountRepository.save(account));
         }
         return Optional.empty();
@@ -99,8 +105,23 @@ public class Bank {
         Person person = personOptional.get();
 
         account.addOwner(person);
+        accountRepository.save(account);
         return true;
 
+    }
+
+    public boolean checkPrivalge(long userId, long accountId){
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        Optional<Person> personOptional = personRepository.findById(userId);
+
+        if (accountOptional.isEmpty()){
+            return false;
+        }
+
+        Account account = accountOptional.get();
+        Person person = personOptional.get();
+
+        return account.isOwner(person);
     }
 
 }

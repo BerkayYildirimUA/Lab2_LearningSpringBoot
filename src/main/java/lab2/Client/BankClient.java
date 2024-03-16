@@ -1,19 +1,19 @@
 package lab2.Client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lab2.Server.Entity.Person;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class BankClient {
     private static final String ACCOUNT_URL = "http://localhost:8081/accounts";
     private static final String PERSON_URL = "http://localhost:8081/persons";
     private final RestTemplate restTemplate = new RestTemplate();
+    private long port = 8081;
 
 
     public Double getBalance(Long accountId) {
@@ -44,6 +44,6 @@ public class BankClient {
     public static void main(String[] args) {
         BankClient client = new BankClient();
 
-        client.createPerson("HALLO WORLD");
+        client.createPerson("Hello World");
     }
 }

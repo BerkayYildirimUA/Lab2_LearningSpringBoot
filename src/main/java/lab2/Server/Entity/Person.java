@@ -13,9 +13,13 @@ public class Person {
     private Long id;
 
     @ManyToMany(mappedBy = "owners")
-    private Set<Account> myAcounts;
+    private Set<Account> myAccounts;
 
     private String name;
+
+    public Long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -25,11 +29,11 @@ public class Person {
         this.name = name;
     }
 
-    public void addAcount(Account ... accounts){
-        myAcounts.addAll(Arrays.asList(accounts));
+    public void addAccount(Account ... accounts){
+        myAccounts.addAll(Arrays.asList(accounts));
     }
 
-    public void removeAcount(Account ... accounts){
-        Arrays.asList(accounts).forEach(myAcounts::remove);
+    public void removeAccount(Account ... accounts){
+        Arrays.asList(accounts).forEach(myAccounts::remove);
     }
 }
