@@ -15,7 +15,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -35,76 +34,78 @@ public class ApplicationIntegrationTest {
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         // Create Person
-        ResponseEntity<String> createPersonResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/create?name=John Doe", null, String.class);
+        ResponseEntity<String> createPersonResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/?name=John Doe", null, String.class);
         assertThat(createPersonResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long personId = extractPersonId(createPersonResponse);
 
         // Create Account For John Doe
-        ResponseEntity<String> createAccountResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/accounts/createAccount?personId=" + personId, null, String.class);assertThat(createAccountResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
+        ResponseEntity<String> createAccountResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/accounts/?personId=" + personId, null, String.class);
+        assertThat(createAccountResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long accountId = extractAccountId(createAccountResponse);
 
         // Deposit into Account
-        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/deposit?personId=" + personId + "&accountId=" + accountId + "&amount=1000",HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + personId + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(depositResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Withdraw from Account
-        ResponseEntity<String> withdrawResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/withdraw?personId=" + personId + "&accountId=" + accountId + "&amount=200",HttpMethod.DELETE, request, String.class);
+        ResponseEntity<String> withdrawResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/withdrawals?personId=" + personId + "&amount=200", HttpMethod.DELETE, request, String.class);
         assertThat(withdrawResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Check Balance
-        ResponseEntity<String> balanceResponse = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/balance?personId=" + personId + "&accountId=" + accountId, String.class);
+        ResponseEntity<String> balanceResponse = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/" + accountId + "/balance?personId=" + personId, String.class);
         assertThat(balanceResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         assertThat(balanceResponse.getBody()).contains("800.0");
     }
 
     @Test
-    public void testDualOwnership(){
+    public void testDualOwnership() {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         // Create Person1
-        ResponseEntity<String> createPerson1Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/create?name=Person1", null, String.class);
+        ResponseEntity<String> createPerson1Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/?name=Person1", request, String.class);
         assertThat(createPerson1Response.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long person1Id = extractPersonId(createPerson1Response);
 
         // Create Person2
-        ResponseEntity<String> createPerson2Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/create?name=Person2", null, String.class);
+        ResponseEntity<String> createPerson2Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/?name=Person2", request, String.class);
         assertThat(createPerson2Response.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long person2Id = extractPersonId(createPerson2Response);
 
         // Create Account For Person1
-        ResponseEntity<String> createAccountResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/accounts/createAccount?personId=" + person1Id, null, String.class);assertThat(createAccountResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
+        ResponseEntity<String> createAccountResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/accounts/?personId=" + person1Id, request, String.class);
+        assertThat(createAccountResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long accountId = extractAccountId(createAccountResponse);
 
         // Add Person2 to Account of person1
-        ResponseEntity<String> addPersonResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/addPersonToAccount?personId=" + person2Id + "&accountId=" + accountId,HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> addPersonResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/person?personId=" + person2Id, HttpMethod.PUT, request, String.class);
         assertThat(addPersonResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Deposit into Account via Person1
-        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/deposit?personId=" + person1Id + "&accountId=" + accountId + "&amount=1000",HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + person1Id + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(depositResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Withdraw from Account via Person2
-        ResponseEntity<String> withdrawResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/withdraw?personId=" + person2Id + "&accountId=" + accountId + "&amount=200",HttpMethod.DELETE, request, String.class);
+        ResponseEntity<String> withdrawResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/withdrawals?personId=" + person2Id + "&amount=200", HttpMethod.DELETE, request, String.class);
         System.out.println("http://localhost:" + port + "/accounts/withdraw?personId=" + person2Id + "&accountId=" + accountId + "&amount=200");
         assertThat(withdrawResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Create Account For Person3
-        ResponseEntity<String> createPerson3Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/create?name=Person3", null, String.class);
+        ResponseEntity<String> createPerson3Response = this.restTemplate.postForEntity("http://localhost:" + port + "/persons/?name=Person3", request, String.class);
         assertThat(createPerson3Response.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         long person3Id = extractPersonId(createPerson3Response);
 
         // Deposit into Account via Person3 (who can't do that)
-        ResponseEntity<String> deposit3Response = this.restTemplate.exchange("http://localhost:" + port + "/accounts/deposit?personId=" + person3Id + "&accountId=" + accountId + "&amount=1000",HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> deposit3Response = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + person3Id + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(deposit3Response.getStatusCode().isError()).isEqualTo(true);
 
         // Check Balance via Person1
-        ResponseEntity<String> balanceResponse = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/balance?personId=" + person1Id + "&accountId=" + accountId, String.class);
+        ResponseEntity<String> balanceResponse = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/" + accountId + "/balance?personId=" + person1Id, String.class);
         assertThat(balanceResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         assertThat(balanceResponse.getBody()).contains("800.0");
 
         // Check Balance via Person2
-        ResponseEntity<String> balance2Response = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/balance?personId=" + person2Id + "&accountId=" + accountId, String.class);
+        ResponseEntity<String> balance2Response = this.restTemplate.getForEntity("http://localhost:" + port + "/accounts/" + accountId + "/balance?personId=" + person2Id, String.class);
         assertThat(balance2Response.getStatusCode().is2xxSuccessful()).isEqualTo(true);
         assertThat(balance2Response.getBody()).contains("800.0");
     }

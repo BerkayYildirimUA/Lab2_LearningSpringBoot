@@ -20,7 +20,12 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @PostMapping("/create")
+    /**
+     * make new person
+     * @param name
+     * @return
+     */
+    @PostMapping("/")
     public ResponseEntity<HashMap<String, Object>> createPerson(@RequestParam String name) {
         Person person = new Person();
         person.setName(name);
