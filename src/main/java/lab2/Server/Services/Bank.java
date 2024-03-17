@@ -21,8 +21,8 @@ public class Bank {
         this.personRepository = personRepository;
     }
 
-    public void addAccount(Account account) {
-        accountRepository.save(account);
+    public Account addAccount(Account account) {
+        return accountRepository.save(account);
     }
 
     public void removeAccount(long accountId) {
@@ -85,7 +85,7 @@ public class Bank {
         if (owner.isPresent()) {
             account.addOwner(owner.get());
             owner.get().addAccount(account);
-            return Optional.of(accountRepository.save(account));
+            return Optional.of(this.addAccount(account));
         }
         return Optional.empty();
     }
@@ -123,5 +123,4 @@ public class Bank {
 
         return account.isOwner(person);
     }
-
 }
