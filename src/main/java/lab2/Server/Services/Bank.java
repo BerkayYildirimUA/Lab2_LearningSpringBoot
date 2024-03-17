@@ -6,6 +6,7 @@ import lab2.Server.Repos.AccountRepository;
 import lab2.Server.Repos.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class Bank {
         return accountRepository.findById(accountId);
     }
 
+    @Transactional
     public boolean deposit(long accountId, double amount) {
         Optional<Account> accountOptional = getAcount(accountId);
         if (accountOptional.isPresent()) {
@@ -45,6 +47,7 @@ public class Bank {
         return false;
     }
 
+    @Transactional
     public Optional<Double> withdraw(long accountId, double amount) {
         Optional<Account> accountOpt = getAcount(accountId);
 
@@ -60,6 +63,7 @@ public class Bank {
         return Optional.empty();
     }
 
+    @Transactional
     public boolean remove(long accountId, double amount) {
         Optional<Account> accountOpt = getAcount(accountId);
         if (accountOpt.isPresent()) {
