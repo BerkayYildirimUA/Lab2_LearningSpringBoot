@@ -76,7 +76,7 @@ public class AccountController {
 
     // POST
     @PostMapping("/")
-    private ResponseEntity<HashMap<String, Object>> createAccount(@RequestParam long personId){
+    public ResponseEntity<HashMap<String, Object>> createAccount(@RequestParam long personId){
         Optional<Account> newAccount = bank.createAcount(personId);
 
         if (newAccount.isPresent()){
