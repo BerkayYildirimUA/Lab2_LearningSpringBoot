@@ -23,7 +23,7 @@ public class AccountController {
     }
 
     // PUT
-    @PutMapping("/{accountId}/deposit")
+    @PutMapping("/{accountId}/deposits")
     public ResponseEntity<?> addBalance(@RequestParam long personId, @PathVariable long accountId, @RequestParam double amount) {
         if (!bank.checkPrivalge(personId, accountId)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

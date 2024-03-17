@@ -44,7 +44,7 @@ public class ApplicationIntegrationTest {
         long accountId = extractAccountId(createAccountResponse);
 
         // Deposit into Account
-        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + personId + "&amount=1000", HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposits?personId=" + personId + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(depositResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Withdraw from Account
@@ -82,7 +82,7 @@ public class ApplicationIntegrationTest {
         assertThat(addPersonResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Deposit into Account via Person1
-        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + person1Id + "&amount=1000", HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> depositResponse = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposits?personId=" + person1Id + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(depositResponse.getStatusCode().is2xxSuccessful()).isEqualTo(true);
 
         // Withdraw from Account via Person2
@@ -96,7 +96,7 @@ public class ApplicationIntegrationTest {
         long person3Id = extractPersonId(createPerson3Response);
 
         // Deposit into Account via Person3 (who can't do that)
-        ResponseEntity<String> deposit3Response = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposit?personId=" + person3Id + "&amount=1000", HttpMethod.PUT, request, String.class);
+        ResponseEntity<String> deposit3Response = this.restTemplate.exchange("http://localhost:" + port + "/accounts/" + accountId + "/deposits?personId=" + person3Id + "&amount=1000", HttpMethod.PUT, request, String.class);
         assertThat(deposit3Response.getStatusCode().isError()).isEqualTo(true);
 
         // Check Balance via Person1
